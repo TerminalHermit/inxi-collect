@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+inxi -F --output json --output-file print | python3 -m json.tool | sed 's/".*#/"/'

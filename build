@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -x
+
+SCRIPT_DIR=${0%/*}
+
+if [ "$EUID" -ne 0 ]; then
+echo requires root
+exit 1
+fi
+
+OUT_DIR=$(mktemp -d)
+
+mkarchiso -v -w $SCRIPT_DIR -o $OUT_DIR "${SCRIPT_DIR}"
