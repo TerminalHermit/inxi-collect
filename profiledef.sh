@@ -19,4 +19,5 @@ bootstrap_tarball_compression=(zstd -c -T$(nproc) --long -15)
 file_permissions=(
   ["/etc/shadow"]="0:0:400"
   ["/root/script"]="0:0:770"
+  ["/root/.bash_profile"]="0:0:770"
 )
