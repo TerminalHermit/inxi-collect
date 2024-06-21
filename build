@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -x
-
-SCRIPT_DIR=${0%/*}
-
+export SCRIPT_DIR=${0%/*}
 if [ "$EUID" -ne 0 ]; then
-echo requires root
-exit 1
+  echo requires root
+  exit 1
 fi
 
-OUT_DIR=$(mktemp -d)
+export OUT_DIR=$(mktemp -d --suffix _archiso-build)
+export WORK_DIR=$(mktemp -d --suffix _archiso-build)
+rsync -a --exclude bin --delete $SCRIPT_DIR $WORK_DIR
+mkarchiso -v -w "${WORK_DIR}" -r -o "$WORK_DIR" "${SCRIPT_DIR}"
 
-mkarchiso -v -w $SCRIPT_DIR -o $OUT_DIR "${SCRIPT_DIR}"
+OUT_DIR_ISO="${SCRIPT_DIR}/bin"
+mkdir -p "${OUT_DIR_ISO}"
+echo "copying iso to out dir: ${OUT_DIR_ISO}"
+mv "${OUT_DIR}/*.iso" "${OUT_DIR_ISO}"
+
+rm -r "$WORK_DIR"
+rm -r "$OUT_DIR"
