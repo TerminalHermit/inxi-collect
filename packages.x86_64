@@ -11,4 +11,5 @@ openssh
 pv
 qemu-guest-agent
 syslinux
+vim
 virtualbox-guest-utils-nox

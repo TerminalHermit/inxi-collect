@@ -1,3 +1,28 @@
 #!/usr/bin/bash
 
-inxi -F --output json --output-file print | python3 -m json.tool | sed 's/".*#/"/'
+LABEL="INXI-COLLECT"
+export HOST="http://meowmachine.dyn.vkm.maschinenbau.tu-darmstadt.de:8000/stat/"
+
+#mount config
+if grep -qs " $LABEL " /proc/mounts; then
+    echo "Filesystem with label '$LABEL' is already mounted."
+  else
+    DEVICE=$(blkid -L "$LABEL" 2>/dev/null)
+    if [ -z "$DEVICE" ]; then
+      echo "Filesystem with label '$LABEL' not found."
+    else 
+      DEVICE=$(echo "$DEVICE" | awk -F ':' '{print $1}')
+      mkdir -p /mnt/$LABEL
+      mount "$DEVICE" /mnt/$LABEL
+    fi
+fi
+
+#overwrite config
+if [ -f "/mnt/$LABEL/envconf" ]; then
+  source "/mnt/$LABEL/envconf"
+fi
+
+export INXI_JSON=$(inxi -F --output json --output-file print | python3 -m json.tool | sed 's/".*#/"/')
+
+curl -X POST -H "Content-Type: application/json" -d "$INXI_JSON" $HOST
+
