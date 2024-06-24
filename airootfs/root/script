@@ -1,7 +1,10 @@
 #!/usr/bin/bash
 
+echo "starting collection script..."
+#sleep 15
 LABEL="INXI-COLLECT"
-export HOST="http://meowmachine.dyn.vkm.maschinenbau.tu-darmstadt.de:8000/stat/"
+UUID=$(cat /sys/class/net/$(ip route show default | awk '/default/ {print $5}')/address)
+export HOST="http://meowmachine.dyn.vkm.maschinenbau.tu-darmstadt.de:8000/stat"
 
 #mount config
 if grep -qs " $LABEL " /proc/mounts; then
@@ -22,7 +25,7 @@ if [ -f "/mnt/$LABEL/envconf" ]; then
   source "/mnt/$LABEL/envconf"
 fi
 
-export INXI_JSON=$(inxi -F --output json --output-file print | python3 -m json.tool | sed 's/".*#/"/')
+export INXI_JSON=$(inxi -JFfdlmopt --output json --output-file print | python3 -m json.tool | sed 's/".*#/"/')
 
-curl -X POST -H "Content-Type: application/json" -d "$INXI_JSON" $HOST
+echo $INXI_JSON | curl  -X POST -H "Content-Type: application/json" -T - "$HOST/$UUID"
 
