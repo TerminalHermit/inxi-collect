@@ -27,5 +27,9 @@ fi
 
 export INXI_JSON=$(inxi -JFfdlmopt --output json --output-file print | python3 -m json.tool | sed 's/".*#/"/')
 
-echo $INXI_JSON | curl  -X POST -H "Content-Type: application/json" -T - "$HOST/$UUID"
+export response=$(echo $INXI_JSON | curl  -X POST -H "Content-Type: application/json" -T - "$HOST/$UUID" | sed 's/^"//; s/"$//')
+export targeturl="$HOST/$response"
+echo "URL: $targeturl"
+qr $targeturl
+
 
