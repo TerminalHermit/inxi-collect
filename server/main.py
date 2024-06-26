@@ -16,7 +16,7 @@ def get_file(id: str):
     file_path = os.path.join(directory, f"{id}")
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404)
-    return FileResponse(file_path, filename=f"{id}.json")
+    return FileResponse(file_path, filename=f"{id}")
 
 @router.post("/stat/{mac}")
 async def create_entry(mac: str, request: Request):

@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 echo "starting collection script..."
-#sleep 15
+sleep 15
 LABEL="INXI-COLLECT"
 UUID=$(cat /sys/class/net/$(ip route show default | awk '/default/ {print $5}')/address)
 export HOST="http://meowmachine.dyn.vkm.maschinenbau.tu-darmstadt.de:8000/stat"
